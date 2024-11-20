@@ -39,7 +39,7 @@ const Dashboard = () => {
   const fetchDashboardData = async () => {
     try {
       // Adjusted API URL to match backend
-      const response = await axios.get('http://localhost:5000/api/assetHistory/summary');
+      const response = await axios.get('https://db-4-demo-project-hlv5.vercel.app/api/assetHistory/summary');
       setTotalAssets(response.data.totalAssets);
       setAssetsInUse(response.data.assetsInUse);
       setCategoryData(response.data.categoryData);

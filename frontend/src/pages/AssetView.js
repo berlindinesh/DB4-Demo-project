@@ -20,7 +20,7 @@ const AssetView = () => {
   const fetchAssets = () => {
     setLoading(true);
     axios
-      .get('http://localhost:5000/api/assets')
+      .get('https://db-4-demo-project-hlv5.vercel.app/api/assets')
       .then((response) => {
         setAssets(response.data);
         setLoading(false);
@@ -67,7 +67,7 @@ const AssetView = () => {
     if (window.confirm('Are you sure you want to delete this asset?')) {
       setLoading(true); // Show loading state when deleting
       axios
-        .delete(`http://localhost:5000/api/assets/${assetId}`)
+        .delete(`https://db-4-demo-project-hlv5.vercel.app/api/assets/${assetId}`)
         .then(() => {
           fetchAssets(); // Refresh the list of assets after deletion
         })

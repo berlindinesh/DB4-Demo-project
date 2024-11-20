@@ -36,12 +36,12 @@ const AddAsset = ({ onClose, refreshAssets, editAsset }) => {
       if (editAsset) {
         // Update existing asset
         console.log("Attempting to update asset:", assetData);
-        await axios.put(`http://localhost:5000/api/assets/${editAsset._id}`, assetData);
+        await axios.put(`https://db-4-demo-project-hlv5.vercel.app//api/assets/${editAsset._id}`, assetData);
         console.log("Asset updated successfully.");
       } else {
         // Create new asset
         console.log("Attempting to create new asset:", assetData);
-        await axios.post('http://localhost:5000/api/assets', assetData);
+        await axios.post('https://db-4-demo-project-hlv5.vercel.app//api/assets', assetData);
         console.log("Asset created successfully.");
       }
   

@@ -19,13 +19,13 @@ function AssetBatch() {
   }, []);
 
   const fetchAssetBatches = async () => {
-    const response = await axios.get('http://localhost:5000/api/asset-batches');
+    const response = await axios.get('https://db-4-demo-project-hlv5.vercel.app/api/asset-batches');
     setAssetBatches(response.data);
   };
 
   const handleSearch = async (e) => {
     setSearchQuery(e.target.value);
-    const response = await axios.get(`http://localhost:5000/api/asset-batches/search?q=${e.target.value}`);
+    const response = await axios.get(`https://db-4-demo-project-hlv5.vercel.app/api/asset-batches/search?q=${e.target.value}`);
     setAssetBatches(response.data);
   };
 
@@ -37,12 +37,12 @@ function AssetBatch() {
   const handleCreateBatch = async (e) => {
     e.preventDefault();
     if (isEditing) {
-      await axios.put(`http://localhost:5000/api/asset-batches/${editBatchId}`, formData);
+      await axios.put(`https://db-4-demo-project-hlv5.vercel.app/api/asset-batches/${editBatchId}`, formData);
       setAssetBatches(assetBatches.map(batch => batch._id === editBatchId ? { ...batch, ...formData } : batch));
       setIsEditing(false);
       setEditBatchId(null);
     } else {
-      const response = await axios.post('http://localhost:5000/api/asset-batches', formData);
+      const response = await axios.post('https://db-4-demo-project-hlv5.vercel.app/api/asset-batches', formData);
       setAssetBatches([...assetBatches, response.data]);
     }
     setFormData({ batchNumber: '', description: '', numberOfAssets: '' });
@@ -61,7 +61,7 @@ function AssetBatch() {
   };
 
   const handleDelete = async (id) => {
-    await axios.delete(`http://localhost:5000/api/asset-batches/${id}`);
+    await axios.delete(`https://db-4-demo-project-hlv5.vercel.app/api/asset-batches/${id}`);
     setAssetBatches(assetBatches.filter(batch => batch._id !== id));
   };
 
