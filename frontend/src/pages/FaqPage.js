@@ -1,12 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import "./FaqPage.css";
 
 const apiBaseURL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
 
 export default function FaqPage() {
     const { categoryId } = useParams();
     const [faqs, setFaqs] = useState([]);
+    const [filteredFaqs, setFilteredFaqs] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [formData, setFormData] = useState({ question: '', answer: '' });
@@ -14,6 +17,7 @@ export default function FaqPage() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
+    // Fetch FAQs by category ID
     const fetchFaqs = useCallback(async () => {
         if (!categoryId) return;
 
@@ -21,6 +25,8 @@ export default function FaqPage() {
         try {
             const { data } = await axios.get(`${apiBaseURL}/api/faqs/category/${categoryId}`);
             setFaqs(data);
+            setFilteredFaqs(data); // Set filteredFAQs to initial data
+            setError(null);
         } catch (err) {
             console.error('Error fetching FAQs:', err);
             setError('Failed to fetch FAQs.');
@@ -32,6 +38,17 @@ export default function FaqPage() {
     useEffect(() => {
         fetchFaqs();
     }, [fetchFaqs]);
+
+    const handleSearchChange = (e) => {
+        const query = e.target.value.toLowerCase();
+        setSearchQuery(query);
+
+        // Filter FAQs based on the query
+        const filtered = faqs.filter((faq) =>
+            faq.question.toLowerCase().includes(query)
+        );
+        setFilteredFaqs(filtered);
+    };
 
     const handleAddChange = (e) => {
         const { name, value } = e.target;
@@ -47,7 +64,8 @@ export default function FaqPage() {
         e.preventDefault();
         try {
             const { data: newFaq } = await axios.post(`${apiBaseURL}/api/faqs/category/${categoryId}`, formData);
-            setFaqs([...faqs, newFaq]); // Optimistic UI update
+            setFaqs([...faqs, newFaq]);
+            setFilteredFaqs([...faqs, newFaq]);
             setIsAddModalOpen(false);
             setFormData({ question: '', answer: '' });
             setError(null);
@@ -61,7 +79,9 @@ export default function FaqPage() {
         e.preventDefault();
         try {
             const { data: updatedFaq } = await axios.put(`${apiBaseURL}/api/faqs/${editingFaq._id}`, editingFaq);
-            setFaqs(faqs.map((faq) => (faq._id === editingFaq._id ? updatedFaq : faq))); // Update UI
+            const updatedFaqs = faqs.map((faq) => (faq._id === editingFaq._id ? updatedFaq : faq));
+            setFaqs(updatedFaqs);
+            setFilteredFaqs(updatedFaqs);
             setIsEditModalOpen(false);
             setEditingFaq(null);
             setError(null);
@@ -74,7 +94,9 @@ export default function FaqPage() {
     const handleDelete = async (faqId) => {
         try {
             await axios.delete(`${apiBaseURL}/api/faqs/${faqId}`);
-            setFaqs(faqs.filter((faq) => faq._id !== faqId)); // Update UI after deletion
+            const updatedFaqs = faqs.filter((faq) => faq._id !== faqId);
+            setFaqs(updatedFaqs);
+            setFilteredFaqs(updatedFaqs);
             setError(null);
         } catch (err) {
             console.error('Error deleting FAQ:', err);
@@ -85,18 +107,58 @@ export default function FaqPage() {
     return (
         <div className="faq-page">
             <h1>FAQs</h1>
-            <button onClick={() => setIsAddModalOpen(true)}>Add FAQ</button>
+            <div className="header-actions">
+                <input
+                    type="text"
+                    placeholder="Search FAQs..."
+                    value={searchQuery}
+                    onChange={handleSearchChange}
+                />
+                <button className="create-button" onClick={() => setIsAddModalOpen(true)}>
+                    + Create
+                </button>
+            </div>
 
-            {loading ? <p>Loading...</p> : null}
-            {error ? <p className="error">{error}</p> : null}
+            {loading && <p>Loading...</p>}
+            {error && <p className="error">{error}</p>}
 
             <ul>
-                {faqs.map((faq) => (
-                    <li key={faq._id}>
+                {filteredFaqs.map((faq) => (
+                    <li
+                        key={faq._id}
+                        onClick={() => {
+                            const updatedFaqs = filteredFaqs.map((item) =>
+                                item._id === faq._id
+                                    ? { ...item, expanded: !item.expanded }
+                                    : { ...item, expanded: false }
+                            );
+                            setFilteredFaqs(updatedFaqs);
+                        }}
+                        className={faq.expanded ? 'expanded' : ''}
+                    >
                         <h3>{faq.question}</h3>
-                        <p>{faq.answer}</p>
-                        <button onClick={() => { setEditingFaq(faq); setIsEditModalOpen(true); }}>Edit</button>
-                        <button onClick={() => handleDelete(faq._id)}>Delete</button>
+                        <div className="answer">{faq.answer}</div>
+                        <div className="action-buttons">
+                            <button
+                                className="edit-button"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setEditingFaq(faq);
+                                    setIsEditModalOpen(true);
+                                }}
+                            >
+                                Edit
+                            </button>
+                            <button
+                                className="delete-button"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDelete(faq._id);
+                                }}
+                            >
+                                Delete
+                            </button>
+                        </div>
                     </li>
                 ))}
             </ul>

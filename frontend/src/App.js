@@ -42,7 +42,7 @@ function App() {
             <Route path="/Configuration/CompanyLeaves" element={<CompanyHolidays />} />
             <Route path="/Configuration/RestrictLeaves" element={<RestrictLeaves />} />
             <Route path="/Helpdesk/FaqCategory" element={<FaqCategory />} />
-            <Route path="/faq/:categoryId" element={FaqPage} />
+            <Route path="/faq/:categoryId" element={< FaqPage />} />
           </Routes>
         </div>
       </div>

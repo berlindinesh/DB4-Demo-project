@@ -60,7 +60,7 @@ const Sidebar = () => {
         {openTab === 'Helpdesk' && (
           <div className="sub-menu">
             <Link to="/Helpdesk/FaqCategory">FAQ</Link>
-            <Link to="/Helpdask/Tickets">Tickets</Link>            
+            <Link to="/Helpdesk/Tickets">Tickets</Link>            
           </div>
       )}
 

@@ -46,7 +46,7 @@ app.use('/api/dashboard', assetDashboardRoutes);
 app.use('/api/holidays', holidayRoutes);
 app.use('/api/companyHolidays', companyHolidaysRoute);
 app.use('/api/restrictLeaves', restrictLeaveRoutes);
-app.use('/api/faqRoutes', faqRoutes);
+app.use('/api/faqs', faqRoutes);
 app.use('/api/faqCategories', faqCategoryRoutes);
 
 // Default route
